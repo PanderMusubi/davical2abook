@@ -1,3 +1,6 @@
+# select addressbook_resource.n, addressbook_address_email.type, addressbook_address_email.email, addressbook_address_tel.type,addressbook_address_tel.property from addressbook_address_tel left join addressbook_address_email on addressbook_address_tel.dav_id = addressbook_address_email.dav_id left join addressbook_resource on addressbook_resource.dav_id = addressbook_address_email.dav_id limit 20;
+
+
 #addressbook_address_tel
 #dav_id type tel property
 
