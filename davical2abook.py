@@ -24,9 +24,9 @@ for i in cur:
     nick = first.replace(' ', '') + last.replace(' ', '')
     emailtype = i[1].strip().upper().replace('INTERNET~|~', '')
     if emailtype == 'HOME':
-        nick += 'H'
+        nick += ':H'
     elif emailtype == 'WORK':
-        nick += 'W'
+        nick += ':W'
     else:
         sys.stderr.write('Unknown addressbook_address_email.type: {0}\n'.format(emailtype))
 
@@ -34,18 +34,12 @@ for i in cur:
 
     teltype = i[3].strip().upper()
     tel = '+' + i[4].strip().replace(' ', '').replace('+', '')
-    if len(tel) == 11:
-        tel = tel[:4] + ' ' + tel[4:7] + ' ' + tel[7:]
-    elif len(tel) == 12:
-        tel = tel[:4] + ' ' + tel[4:8] + ' ' + tel[8:]
-    elif len(tel) == 13:
-        tel = tel[:5] + ' ' + tel[5:9] + ' ' + tel[9:]
     if teltype == 'CELL':
-        tel = 'M: ' + tel
+        tel = 'M:' + tel
     elif teltype == 'HOME':
-        tel = 'H: ' + tel
+        tel = 'H:' + tel
     elif teltype == 'WORK':
-        tel = 'W: ' + tel
+        tel = 'W:' + tel
     else:
         sys.stderr.write('Unknown addressbook_address_tel.type: {0}\n'.format(teltype))
 
