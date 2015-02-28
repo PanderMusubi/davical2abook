@@ -32,7 +32,7 @@ for i in cur:
 
     email = i[2].strip().lower()
 
-    teltype = i[3].strip().upper()
+    teltype = i[3].strip().upper().replace('~|~VOICE', '')
     tel = '+' + i[4].strip().replace(' ', '').replace('+', '')
     if teltype == 'CELL':
         tel = 'M:' + tel
