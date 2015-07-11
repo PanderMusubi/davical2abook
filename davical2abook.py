@@ -1,8 +1,12 @@
-# Description: DAViCal CardDAV to SquirrelMail address book format (.abook) converter
+#!/usr/bin/env python3
+
+# Description: DAViCal CardDAV to SquirrelMail address book (.abook) converter
 # License: GPL, following the license of DAViCal
 # Author: Pander Musubi <pander@users.sourceforge.net>
 
-import psycopg2, re, sys
+import psycopg2
+import re
+import sys
 
 if len(sys.argv) != 2:
     sys.stderr.write('Missing required argument DAViCal username\n')
@@ -13,7 +17,17 @@ if not re.match("^[A-Za-z0-9_-]*$", username):
 
 conn = psycopg2.connect('dbname=davical user=davical_dba')
 cur = conn.cursor()
-cur.execute("select addressbook_resource.n, addressbook_address_email.type, addressbook_address_email.email, addressbook_address_tel.type,addressbook_address_tel.tel from addressbook_address_tel left join addressbook_address_email on addressbook_address_tel.dav_id = addressbook_address_email.dav_id left join addressbook_resource on addressbook_resource.dav_id = addressbook_address_email.dav_id left join caldav_data on caldav_data.dav_id = addressbook_resource.dav_id left join usr on usr.user_no = caldav_data.user_no where usr.username = %s;", (username, ))
+cur.execute('select addressbook_resource.n, addressbook_address_email.type, '
+            'addressbook_address_email.email, addressbook_address_tel.type, '
+            'addressbook_address_tel.tel from addressbook_address_tel left '
+            'join addressbook_address_email on '
+            'addressbook_address_tel.dav_id = '
+            'addressbook_address_email.dav_id left join addressbook_resource '
+            'on addressbook_resource.dav_id = '
+            'addressbook_address_email.dav_id left join caldav_data on '
+            'caldav_data.dav_id = addressbook_resource.dav_id left join usr '
+            'on usr.user_no = caldav_data.user_no where usr.username = %s;',
+            (username, ))
 
 data = {}
 for i in cur:
@@ -28,22 +42,26 @@ for i in cur:
     elif emailtype == 'WORK':
         nick += ':W'
     else:
-        sys.stderr.write('Unknown addressbook_address_email.type: {0}\n'.format(emailtype))
+        sys.stderr.write(
+            'Unknown addressbook_address_email.type: {0}\n'.format(emailtype))
 
     email = i[2].strip().lower()
 
-    teltype = i[3].strip().upper().replace('~|~VOICE', '')
-    tel = '+' + i[4].strip().replace(' ', '').replace('+', '')
-    if teltype == 'CELL':
+    teltype = i[3].strip().upper()
+    tel = '+' + i[4].strip()
+    tel = tel.replace(' ', '')
+    tel = tel.replace('+', '')
+    if 'CELL' in teltype:
         tel = 'M:' + tel
-    elif teltype == 'HOME':
+    elif 'HOME' in teltype:
         tel = 'H:' + tel
-    elif teltype == 'WORK':
+    elif 'WORK' in teltype:
         tel = 'W:' + tel
     else:
-        sys.stderr.write('Unknown addressbook_address_tel.type: {0}\n'.format(teltype))
+        sys.stderr.write(
+            'Unknown addressbook_address_tel.type: {0}\n'.format(teltype))
 
-    key = nick+'|'+first+'|'+last+'|'+email+'|'
+    key = nick + '|' + first + '|' + last + '|' + email + '|'
     if key not in data:
         data[key] = tel
     else:
@@ -53,4 +71,4 @@ cur.close()
 conn.close()
 
 for key in sorted(data.keys()):
-    print key + data[key]
+    print(key + data[key])
