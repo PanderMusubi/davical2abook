@@ -36,14 +36,14 @@ for i in cur:
     first = name[1].strip()
 
     nick = first.replace(' ', '') + last.replace(' ', '')
-    emailtype = i[1].strip().upper().replace('INTERNET~|~', '')
-    if emailtype == 'HOME':
+    emailtype = i[1].strip().upper()
+    if 'HOME' in emailtype:
         nick += ':H'
-    elif emailtype == 'WORK':
+    elif 'WORK' in emailtype:
         nick += ':W'
     else:
         sys.stderr.write(
-            'Unknown addressbook_address_email.type: {0}\n'.format(emailtype))
+            'Unknown email type {0} for {1}\n'.format(emailtype, nick))
 
     email = i[2].strip().lower()
 
@@ -59,7 +59,7 @@ for i in cur:
         tel = 'W:' + tel
     else:
         sys.stderr.write(
-            'Unknown addressbook_address_tel.type: {0}\n'.format(teltype))
+            'Unknown telephone type {0} for {1}\n'.format(teltype, nick))
 
     key = nick + '|' + first + '|' + last + '|' + email + '|'
     if key not in data:
