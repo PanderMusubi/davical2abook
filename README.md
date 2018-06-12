@@ -27,7 +27,7 @@ Below is an example for a user called username to nightly override the personal
 address book in SquirrelMail with the addresses from DAViCal:
 
 ```
-57 05 * * * root su - postgres -c "python davical2abook.py username" > /var/lib/squirrelmail/data/username.abook
+57 05 * * * root su - postgres -c "python3 davical2abook.py username" > /var/lib/squirrelmail/data/username.abook
 ```
 
 For this example, `davical2abook.py` can reside in `/var/lib/postgresql/`
