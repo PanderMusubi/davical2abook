@@ -31,3 +31,7 @@ address book in SquirrelMail with the addresses from DAViCal:
 ```
 
 For this example, `davical2abook.py` can reside in `/var/lib/postgresql/`
+
+Note that output is reverse sorted on id from DAViCal, listing the most
+recently added address at the top. Also, addresses without emails but with
+telephone numbers are also included, but with the dummy email addres `d@um.my`.
