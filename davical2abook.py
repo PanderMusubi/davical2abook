@@ -83,7 +83,9 @@ tels = {}
 for i in cur:
     name = i[0].split(';')
     last = name[0].strip()
-    first = name[1].strip()
+    first = ''
+    if len(name) > 1:
+        first = name[1].strip()
 
     nick = first.replace(' ', '').replace('-', '') + last.replace(' ', '').replace('-', '')
 
