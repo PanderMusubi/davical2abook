@@ -84,8 +84,7 @@ cur.execute('SELECT addressbook_resource.n, addressbook_address_tel.type, '
             'caldav_data.dav_id = addressbook_resource.dav_id '
             'LEFT JOIN usr ON '
             'usr.user_no = caldav_data.user_no '
-            'WHERE usr.username = %s;',
-            (username, ))
+            'WHERE usr.username = %s;', (username, ))
 
 # without email
 tels = {}
