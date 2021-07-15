@@ -1,6 +1,5 @@
 # davical2abook
 
-
 ## Introduction
 
 [DAViCal](https://en.wikipedia.org/wiki/DAViCal) CardDAV to [SquirrelMail](https://en.wikipedia.org/wiki/SquirrelMail) address book format (.abook) converter
@@ -9,15 +8,17 @@ This license is GPL, following the license of DAViCal.
 
 Author is Pander Musubi <pander@users.sourceforge.net>
 
-
 ## Prerequisitsts
 
 Please install Python 3 support for PostgreSQL with:
 
     sudo apt-get install python3-psycopg2
 
-Of course, have PostrgeSQL, DAViCal and SquirrelMail services running on the system.
+or
 
+    sudo pip3 install -U psycopg2
+
+Of course, have PostrgeSQL, DAViCal and SquirrelMail services running on the system.
 
 ## Usage
 

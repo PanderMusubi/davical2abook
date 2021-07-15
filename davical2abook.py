@@ -33,8 +33,7 @@ cur.execute('SELECT addressbook_resource.n, addressbook_address_email.type, '
             'LEFT JOIN usr ON '
             'usr.user_no = '
             'caldav_data.user_no '
-            'WHERE usr.username = %s;',
-            (username, ))
+            'WHERE usr.username = %s;', (username, ))
 
 data = {}
 for i in cur:
@@ -49,10 +48,13 @@ for i in cur:
             nick += ':H'
         elif 'WORK' in emailtype:
             nick += ':W'
+        elif 'OTHER' in emailtype:
+            nick += ':O'
         else:
-            sys.stderr.write(f'Unknown email type {emailtype} for {nick}\n')
+            sys.stderr.write(f'Unsupported email type {emailtype} for {nick}\n')
     except AttributeError:
-        sys.stderr.write(f'Unstrippable email type {emailtype} for {nick}\n')
+        sys.stderr.write(f'Unstrippable input {i} for {nick}\n')
+        continue
 
     email = i[2].strip().lower()
 
@@ -67,7 +69,7 @@ for i in cur:
     elif 'WORK' in teltype:
         tel = 'W:' + tel
     else:
-        sys.stderr.write(f'Unknown telephone type {teltype} for {nick}\n')
+        sys.stderr.write(f'Unsupported telephone type {teltype} for {nick}\n')
 
     key = i[5] # id
     if key not in data:
@@ -108,7 +110,7 @@ for i in cur:
     elif 'WORK' in teltype:
         tel = 'W:' + tel
     else:
-        sys.stderr.write(f'Unknown telephone type {teltype} for {nick}\n')
+        sys.stderr.write(f'Unsupported telephone type {teltype} for {nick}\n')
 
     key = i[3] # id
     if key not in data:
