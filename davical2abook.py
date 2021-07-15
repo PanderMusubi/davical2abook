@@ -1,33 +1,39 @@
 #!/usr/bin/env python3
+'''Convert DAViCal CardDAV to SquirrelMail address book (.abook).'''
 
-# Description: DAViCal CardDAV to SquirrelMail address book (.abook) converter
 # License: GPL, following the license of DAViCal
 # Author: Pander Musubi <pander@users.sourceforge.net>
 
-import psycopg2
 import re
-from sys import argv, stderr
+import sys
+import psycopg2
 
-if len(argv) != 2:
-    stderr.write('Missing required argument DAViCal username\n')
-    exit(1)
-username = argv[1]
+if len(sys.argv) != 2:
+    sys.stderr.write('Missing required argument DAViCal username\n')
+    sys.exit(1)
+username = sys.argv[1]
 if not re.match("^[A-Za-z0-9_-]*$", username):
-    stderr.write('Username contains illegal characters\n')
+    sys.stderr.write('Username contains illegal characters\n')
 
 conn = psycopg2.connect('dbname=davical user=davical_dba')
 cur = conn.cursor()
-cur.execute('select addressbook_resource.n, addressbook_address_email.type, '
+cur.execute('SELECT addressbook_resource.n, addressbook_address_email.type, '
             'addressbook_address_email.email, addressbook_address_tel.type, '
-            'addressbook_address_tel.tel, caldav_data.dav_id from '
-            'addressbook_address_tel left '
-            'join addressbook_address_email on '
+            'addressbook_address_tel.tel, caldav_data.dav_id '
+            'FROM addressbook_address_tel '
+            'LEFT JOIN addressbook_address_email ON '
             'addressbook_address_tel.dav_id = '
-            'addressbook_address_email.dav_id left join addressbook_resource '
-            'on addressbook_resource.dav_id = '
-            'addressbook_address_email.dav_id left join caldav_data on '
-            'caldav_data.dav_id = addressbook_resource.dav_id left join usr '
-            'on usr.user_no = caldav_data.user_no where usr.username = %s;',
+            'addressbook_address_email.dav_id '
+            'LEFT JOIN addressbook_resource ON '
+            'addressbook_resource.dav_id = '
+            'addressbook_address_email.dav_id '
+            'LEFT JOIN caldav_data ON '
+            'caldav_data.dav_id = '
+            'addressbook_resource.dav_id '
+            'LEFT JOIN usr ON '
+            'usr.user_no = '
+            'caldav_data.user_no '
+            'WHERE usr.username = %s;',
             (username, ))
 
 data = {}
@@ -37,14 +43,16 @@ for i in cur:
     first = name[1].strip()
 
     nick = first.replace(' ', '').replace('-', '') + last.replace(' ', '').replace('-', '')
-    emailtype = i[1].strip().upper()
-    if 'HOME' in emailtype:
-        nick += ':H'
-    elif 'WORK' in emailtype:
-        nick += ':W'
-    else:
-        stderr.write(
-            'Unknown email type {0} for {1}\n'.format(emailtype, nick))
+    try:
+        emailtype = i[1].strip().upper()
+        if 'HOME' in emailtype:
+            nick += ':H'
+        elif 'WORK' in emailtype:
+            nick += ':W'
+        else:
+            sys.stderr.write(f'Unknown email type {emailtype} for {nick}\n')
+    except AttributeError:
+        sys.stderr.write(f'Unstrippable email type {emailtype} for {nick}\n')
 
     email = i[2].strip().lower()
 
@@ -59,23 +67,24 @@ for i in cur:
     elif 'WORK' in teltype:
         tel = 'W:' + tel
     else:
-        stderr.write(
-            'Unknown telephone type {0} for {1}\n'.format(teltype, nick))
+        sys.stderr.write(f'Unknown telephone type {teltype} for {nick}\n')
 
     key = i[5] # id
     if key not in data:
-        data[key] = '{}|{}|{}|{}|{}'.format(nick, first, last, email, tel)
+        data[key] = f'{nick}|{first}|{last}|{email}|{tel}'
     else:
-        data[key] = '{} {}'.format(data[key], tel)
+        data[key] = f'{data[key]} {tel}'
 
-cur.execute('select addressbook_resource.n, addressbook_address_tel.type, '
-            'addressbook_address_tel.tel, caldav_data.dav_id from '
-            'addressbook_address_tel left '
-            'join addressbook_resource '
-            'on addressbook_resource.dav_id = '
-            'addressbook_address_tel.dav_id left join caldav_data on '
-            'caldav_data.dav_id = addressbook_resource.dav_id left join usr '
-            'on usr.user_no = caldav_data.user_no where usr.username = %s;',
+cur.execute('SELECT addressbook_resource.n, addressbook_address_tel.type, '
+            'addressbook_address_tel.tel, caldav_data.dav_id '
+            'FORM addressbook_address_tel '
+            'LEFT JOIN addressbook_resource ON '
+            'addressbook_resource.dav_id = addressbook_address_tel.dav_id '
+            'LEFT JOIN caldav_data ON '
+            'caldav_data.dav_id = addressbook_resource.dav_id '
+            'LEFT JOIN usr ON '
+            'usr.user_no = caldav_data.user_no '
+            'WHERE usr.username = %s;',
             (username, ))
 
 # without email
@@ -83,7 +92,7 @@ tels = {}
 for i in cur:
     name = i[0].split(';')
     last = name[0].strip()
-    first = ''
+    first = name[1].strip()
     if len(name) > 1:
         first = name[1].strip()
 
@@ -100,15 +109,14 @@ for i in cur:
     elif 'WORK' in teltype:
         tel = 'W:' + tel
     else:
-        stderr.write(
-            'Unknown telephone type {0} for {1}\n'.format(teltype, nick))
+        sys.stderr.write(f'Unknown telephone type {teltype} for {nick}\n')
 
     key = i[3] # id
     if key not in data:
         if key not in tels:
-            tels[key] = '{}|{}|{}|{}|{}'.format(nick, first, last, 'd@um.my', tel)
+            tels[key] = f'{nick}|{first}|{last}|d@um.my|{tel}'
         else:
-            tels[key] = '{} {}'.format(tels[key], tel)
+            tels[key] = f'{tels[key]} {tel}'
 
 cur.close()
 conn.close()
