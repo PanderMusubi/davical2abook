@@ -77,7 +77,7 @@ for i in cur:
 
 cur.execute('SELECT addressbook_resource.n, addressbook_address_tel.type, '
             'addressbook_address_tel.tel, caldav_data.dav_id '
-            'FORM addressbook_address_tel '
+            'FROM addressbook_address_tel '
             'LEFT JOIN addressbook_resource ON '
             'addressbook_resource.dav_id = addressbook_address_tel.dav_id '
             'LEFT JOIN caldav_data ON '
