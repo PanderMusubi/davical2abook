@@ -68,6 +68,8 @@ for i in cur:
         tel = 'H:' + tel
     elif 'WORK' in teltype:
         tel = 'W:' + tel
+    elif 'VOICE' in teltype:
+        tel = 'V:' + tel
     else:
         sys.stderr.write(f'Unsupported telephone type {teltype} for {nick}\n')
 
@@ -109,6 +111,8 @@ for i in cur:
         tel = 'H:' + tel
     elif 'WORK' in teltype:
         tel = 'W:' + tel
+    elif 'VOICE' in teltype:
+        tel = 'V:' + tel
     else:
         sys.stderr.write(f'Unsupported telephone type {teltype} for {nick}\n')
 
