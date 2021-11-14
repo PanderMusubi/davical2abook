@@ -44,17 +44,17 @@ for i in cur:
     nick = first.replace(' ', '').replace('-', '') + last.replace(' ', '').replace('-', '')
     try:
         emailtype = i[1].strip().upper()
-        if 'HOME' in emailtype:
-            nick += ':H'
-        elif 'WORK' in emailtype:
-            nick += ':W'
-        elif 'OTHER' in emailtype:
-            nick += ':O'
-        else:
-            sys.stderr.write(f'Unsupported email type {emailtype} for {nick}\n')
     except AttributeError:
-        sys.stderr.write(f'Unstrippable input {i} for {nick}\n')
+        sys.stderr.write(f'Unstrippable input {i} for {nick}, probably missing email type\n')
         continue
+    if 'HOME' in emailtype:
+        nick += ':H'
+    elif 'WORK' in emailtype:
+        nick += ':W'
+    elif 'OTHER' in emailtype:
+        nick += ':O'
+    else:
+        sys.stderr.write(f'Unsupported email type {emailtype} for {nick}\n')
 
     email = i[2].strip().lower()
 
