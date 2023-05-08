@@ -53,6 +53,8 @@ for i in cur:
         nick += ':W'
     elif 'OTHER' in emailtype:
         nick += ':O'
+    elif 'CELL' in emailtype:
+        nick += ':C'
     else:
         sys.stderr.write(f'Unsupported email type {emailtype} for {nick}\n')
 

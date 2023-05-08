@@ -16,7 +16,7 @@ Please install Python 3 support for PostgreSQL with:
 
 or
 
-    sudo pip3 install -U psycopg2
+    sudo pip install -U psycopg2
 
 Of course, have PostrgeSQL, DAViCal and SquirrelMail services running on the system.
 
